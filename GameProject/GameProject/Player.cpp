@@ -27,11 +27,14 @@ void Player::Update()
 		movement = Vec2::Zero;
 		const InputSystem& input = InputSystem::Instance();
 
-		if (input.IsKeyPressed(SDLK_KP_ENTER) && networkedEntity == nullptr)
+
+		//shoot Test
+		if (input.IsMouseButtonPressed(1) && networkedEntity == nullptr)
 		{
 			networkedEntity = SceneManager::Instance().CreateEntity();
 			Sprite* sprite = (Sprite*)networkedEntity->CreateComponent("Sprite");
-			TextureAsset* asset = (TextureAsset*)AssetManager::Instance().GetAsset("Explosion_435e0fce-7b11-409c-858e-af4bd7fe99c0");
+			TextureAsset* asset = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
+			networkedEntity->GetTransform().position = owner->GetTransform().position;
 			sprite->SetTextureAsset(asset);
 		}
 
@@ -97,10 +100,6 @@ void Player::Update()
 	if (movement != Vec2::Zero)
 	{
 		// Move the player
-		if (networkedEntity)
-		{
-			networkedEntity->GetTransform().position += movement;
-		}
 		owner->GetTransform().position += movement;
 
 		if (collider == nullptr)
