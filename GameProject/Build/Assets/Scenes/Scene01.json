@@ -2,13 +2,7 @@
   "AssetManager": {
     "Assets": [
       {
-        "GUID": "awooga"
-      },
-      {
-        "GUID": "girl"
-      },
-      {
-        "GUID": "Explosion_435e0fce-7b11-409c-858e-af4bd7fe99c0"
+        "GUID": "a7af9547-0ca5-4df0-8f37-276d7827117b"
       }
     ]
   },
@@ -28,15 +22,10 @@
             },
             "Components": [
                 {
-                    "ClassName": "AnimatedSprite",
+                    "ClassName": "Sprite",
                     "ClassData": {
                       "GUID": "d8db5d8d-e65d-4f7a-b0eb-ebd55bd70c22",
-                      "Texture": "girl",
-                      "SpriteSheet": {
-                          "Rows": 1,
-                          "Columns": 20,
-                          "Frames": 20
-                      }
+                      "Texture": "a7af9547-0ca5-4df0-8f37-276d7827117b"
                     }
                 },
                 {
@@ -49,37 +38,12 @@
                     "ClassName": "Player",
                     "ClassData": {
                       "GUID": "13fa2605-d562-4978-87d4-c7bc1ea24bd9",
-                      "Speed": 400.0,
+                      "Speed": 5.0,
                       "DeathScene": "45f479c9-f110-43c5-be35-9fbbc5d7d694"
                     }
                 }
             ]
-        },
-      {
-        "Name": "Enemy",
-        "GUID": "uwu2",
-        "Transform": {
-          "GUID": "1d7737fa-abfd-457c-8a1f-b46a4019cd8d",
-          "Position": [1000.0, 250.0],
-          "Rotation": 0.0,
-          "Scale": [0.4, 0.4]
-        },
-        "Components": [
-            {
-                "ClassName": "Sprite",
-                "ClassData": {
-                  "GUID": "32dea180-80ca-4e88-acb7-1bf4a68ebfa5",
-                  "Texture": "awooga"
-                }
-            },
-            {
-                "ClassName": "CircleCollider",
-                "ClassData": {
-                  "GUID": "b99ca8cc-f97d-4e98-9155-7312373a1727"
-                }
-            }
-        ]
-      }
+        }
     ]
   }
 }
