@@ -5,7 +5,7 @@
 #include "BoxCollider.h"
 #include "NetworkRPC.h"
 #include "NetworkEngine.h"
-
+#include "Bullet.h"
 #define NDEBUG_PLAYER
 
 IMPLEMENT_DYNAMIC_CLASS(Player)
@@ -13,9 +13,9 @@ IMPLEMENT_DYNAMIC_CLASS(Player)
 void Player::Initialize()
 {
 	Component::Initialize();
-	start_pos = owner->GetTransform().position;
-	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
 
+	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
+	health = (Health*)owner->GetComponent("Health");
 	RegisterRPC(GetHashCode("RPC"), std::bind(&Player::RPC, this, std::placeholders::_1));
 }
 
@@ -23,119 +23,21 @@ void Player::Update()
 {
 	if (NetworkEngine::Instance().IsServer() == false)
 	{
-
-		movement = Vec2::Zero;
 		const InputSystem& input = InputSystem::Instance();
-
-
+		lastFireTime-=Time::Instance().DeltaTime();
 		//shoot Test
-		if (input.IsMouseButtonPressed(1) && networkedEntity == nullptr)
+		if (input.IsMouseButtonPressed(1)&&lastFireTime < 0.0f)
 		{
-			networkedEntity = SceneManager::Instance().CreateEntity();
-			Sprite* sprite = (Sprite*)networkedEntity->CreateComponent("Sprite");
-			TextureAsset* asset = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
-			networkedEntity->GetTransform().position = owner->GetTransform().position;
-			sprite->SetTextureAsset(asset);
+			Fire();
+			lastFireTime = cooldownTimer;
 		}
-
-		// Handle horizontal movement
-		if (input.IsKeyPressed(SDLK_LEFT) || input.IsKeyPressed(SDLK_a) || input.IsGamepadButtonPressed(0, SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-			movement.x -= 1;
-		}
-		if (input.IsKeyPressed(SDLK_RIGHT) || input.IsKeyPressed(SDLK_d) || input.IsGamepadButtonPressed(0, SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-			movement.x += 1;
-		}
-
-		// Handle vertical movement
-		if (input.IsKeyPressed(SDLK_UP) || input.IsKeyPressed(SDLK_w) || input.IsGamepadButtonPressed(0, SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-			movement.y -= 1;
-
-		}
-		if (input.IsKeyPressed(SDLK_DOWN) || input.IsKeyPressed(SDLK_s) || input.IsGamepadButtonPressed(0, SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-			movement.y += 1;
-
-		}
-
-
-		// Handle gamepad analog stick input
-		if (movement == Vec2::Zero) {
-			movement.x = input.GetGamepadAxisState(0, SDL_CONTROLLER_AXIS_LEFTX);
-			movement.y = input.GetGamepadAxisState(0, SDL_CONTROLLER_AXIS_LEFTY);
-		}
-
-		// Normalize the direction vector if it's not zero
-		if (movement != Vec2::Zero) {
-			movement.Normalize();
-#ifdef DEBUG_PLAYER
-			LOG("Input: " << dir.x << ", " << dir.y);
-#endif
-		}
-	}
-	if (NetworkEngine::Instance().IsClient() == true)
-	{
-		if (movement != Vec2::Zero)
-		{
-			RakNet::BitStream bitStream;
-
-			bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
-			bitStream.Write((unsigned char)MSG_RPC);
-
-			bitStream.Write(owner->GetParentScene()->GetUid());
-
-			bitStream.Write(owner->GetUid());
-
-			bitStream.Write(GetUid());
-
-			bitStream.Write(GetHashCode("RPC"));
-
-			bitStream.Write(movement.x);
-			bitStream.Write(movement.y);
-
-			NetworkEngine::Instance().SendPacket(bitStream);
-
-
-		}
-		return;
-	}
-	if (movement != Vec2::Zero)
-	{
-		// Move the player
-		owner->GetTransform().position += movement;
-
-		if (collider == nullptr)
-		{
-			LOG("no collider uwu");
-			return;
-		}
-		for (const auto& other : collider->OnCollisionEnter())
-		{
-			if (other->GetOwner()->GetName() != "Enemy")
-			{
-				continue;
-			}
-
-			Scene* current_scene = SceneManager::Instance().GetActiveScene();
-			if (SceneManager::Instance().SetActiveScene(game_over_scene))
-			{
-				current_scene->SetEnabled(false);
-			}
-
-			owner->GetTransform().position = start_pos;
-		}
-
-		
-
-		movement = Vec2::Zero;
 	}
 
 }
 void Player::Load(json::JSON& node)
 {
 	Component::Load(node);
-	if (node.hasKey("Speed"))
-	{
-		speed = static_cast<float>(node.at("Speed").ToFloat());
-	}
+
 
 	if (node.hasKey("DeathScene"))
 	{
@@ -147,8 +49,51 @@ void Player::RPC(RakNet::BitStream& bitStream)
 {
 	float value = 0.0f;
 	bitStream.Read(value);
-	movement.x += value;
-	bitStream.Read(value);
-	movement.y += value;
+}
+void Player::CheckCollision()
+{
+	for (const auto& other : collider->OnCollisionEnter())
+	{
+		if (other->GetOwner()->GetName() != "Enemy")
+		{
+			continue;
+		}
+
+		LOG("Player collided with enemy");
+	}
+}
+
+void Player::Fire() 
+{
+	LOG("Player fired");
+	Entity* bullet = owner->GetParentScene()->CreateEntity();
+	Sprite* bulletSprite = (Sprite*)bullet->CreateComponent("Sprite");
+	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
+	bulletSprite->SetTextureAsset(bulletTexture);
+
+	std::vector<std::string> components = { "BoxCollider" };
+	bullet->AddComponents(components);
+	bullet->GetTransform().position = owner->GetTransform().position;
+	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
+
+
+	Vec2 targetPos;
+	// Get mouse position and adjust by camera position.
+	int mouseX, mouseY;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	targetPos = Vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
+	// Calculate direction and set velocity.
+	Vec2 direction = targetPos - owner->GetTransform().position;
+	direction.Normalize();
+	float angleRadians = atan2(direction.y, direction.x);
+
+
+	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
+
+	// Assuming bullet has a ProjectileComponent to set its velocity.
+	Bullet* bulletcomponent = (Bullet*)bullet->CreateComponent("Bullet");
+	bulletcomponent->SetSpeed(100.0f);
+	bulletcomponent->SetDirection(direction);
 
 }
+

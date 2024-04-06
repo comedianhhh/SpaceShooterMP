@@ -3,6 +3,7 @@
 #define PLAYER_H
 
 #include "GameCore.h"
+#include "Health.h"
 
 class BoxCollider;
 
@@ -15,18 +16,23 @@ public:
     void Update() override;
     void Load(json::JSON&) override;
 private:
-    float speed = 5.0f;
-    Vec2 start_pos;
+
+
     BoxCollider* collider = nullptr;
     STRCODE game_over_scene = -1;
-
+    Health* health = nullptr;
     Entity* networkedEntity = nullptr;
 
 private:
     void RPC(RakNet::BitStream& bitStream);
 
 private:
-    Vec2 movement;
+    void Fire();
+    
+    void CheckCollision();
+    float cooldownTimer = 0.5f;
+    float lastFireTime = 0.0f;
+
 };
 
 #endif // PLAYER_H
