@@ -19,6 +19,8 @@
     <ClCompile Include="Health.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidSpawner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameCore.h">
@@ -36,6 +38,8 @@
     <ClInclude Include="Health.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidSpawner.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Build\Assets\AssetManager.json">
