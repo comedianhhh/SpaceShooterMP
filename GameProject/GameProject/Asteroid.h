@@ -4,7 +4,7 @@
 
 #include "GameCore.h"
 
-class CircleCollider;
+class BoxCollider;
 
 class Asteroid : public Component
 {
@@ -17,11 +17,13 @@ public:
     
     Health* health = nullptr;
     Entity* networkedEntity = nullptr;
-    CircleCollider* collider = nullptr;
+    BoxCollider* collider = nullptr;
 
 private:
     Vec2 direction = Vec2::Zero;
     float speed = 5.0f;
+
+    void RPC(RakNet::BitStream& bitStream);
 
     void Move();
     void CheckCollision();

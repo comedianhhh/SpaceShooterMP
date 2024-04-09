@@ -1,6 +1,6 @@
 #include "GameCore.h"
 #include "Asteroid.h"
-#include "CircleCollider.h"
+#include "BoxCollider.h"
 
 void Asteroid::Initialize()
 {
@@ -33,10 +33,10 @@ void Asteroid::CheckBounds()
 
 }
 
-//
-//void Asteroid::RPC(RakNet::BitStream& bitStream)
-//{
-//}
+
+void Asteroid::RPC(RakNet::BitStream& bitStream)
+{
+}
 
 void Asteroid::Move()
 {

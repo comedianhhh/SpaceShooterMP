@@ -30,10 +30,10 @@ void AsteroidSpawner::SpawnAsteroid()
 
 float AsteroidSpawner::GetRandom(float min, float max)
 {
-	std::random_device rd;
+	/*std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<float> dis(min, max);
+	std::uniform_real_distribution<float> dis(min, max);
 
-	float random_number = dis(gen);
-	return random_number;
+	float random_number = dis(gen);*/
+	return 1.f;
 }
