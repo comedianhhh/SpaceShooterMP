@@ -6,7 +6,7 @@
 #include "BoxCollider.h"
 
 
-class Bullet:public Component
+class Bullet :public Component
 {
 	DECLARE_DYNAMIC_DERIVED_CLASS(Bullet, Component)
 
@@ -18,16 +18,16 @@ public:
 	void SetSpeed(float speed);
 
 private:
-	Vec2 direction=Vec2::Zero;
-	float speed=10.0f;
+	Vec2 direction = Vec2::Zero;
+	float speed = 100.0f;
 
-	BoxCollider* collider=nullptr;
+	BoxCollider* collider = nullptr;
 
 	void CheckCollision();
 	void CheckBounds();
 	void Move();
 
-
+	void RPC(RakNet::BitStream& bitStream);
 };
 
-#endif 
+#endif
