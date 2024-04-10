@@ -26,6 +26,7 @@ private:
 	void CheckCollision();
 	void CheckBounds();
 	void Move();
+	void DestoryBullet();
 
 	void RPC(RakNet::BitStream& bitStream);
 };

@@ -118,7 +118,6 @@ void Player::Fire()
 
 		bitStream.Write(direction.x);
 		bitStream.Write(direction.y);
-		LOG(direction.x << " " << direction.y);
 		bitStream.Write(owner->GetTransform().position.x);
 		bitStream.Write(owner->GetTransform().position.y);
 		NetworkEngine::Instance().SendPacket(bitStream);

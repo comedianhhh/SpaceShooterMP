@@ -9,7 +9,6 @@ void Bullet::Initialize()
 	Component::Initialize();
 	collider = owner->GetComponent<BoxCollider>();
 	RegisterRPC(GetHashCode("FireRPC"), std::bind(&Bullet::RPC, this, std::placeholders::_1));
-	LOG("Bullet Initialized");
 }
 
 void Bullet::Update()
@@ -45,8 +44,8 @@ void Bullet::CheckBounds()
 		owner->GetTransform().position.x < 0)
 	{
 		// Destroy or deactivate this bullet
-		owner->GetParentScene()->RemoveEntity(owner->GetGuid());
-		LOG("Bullet Destroyed");
+		DestoryBullet();
+		
 		return;
 	}
 
@@ -60,7 +59,7 @@ void Bullet::CheckCollision()
 		// Here, you can check for collision with specific entities
 		if (other->GetOwner()->GetName() == "Enemy")
 		{
-			SceneManager::Instance().RemoveEntity(owner->GetUid());
+			DestoryBullet();
 			LOG("Bullet collided with enemy");
 		}
 		break;
@@ -68,5 +67,25 @@ void Bullet::CheckCollision()
 }
 void Bullet::RPC(RakNet::BitStream& bitStream)
 {
+	float value = 0;
+	bitStream.Read(value);
+	SceneManager::Instance().RemoveEntity(value);
+}
+void Bullet::DestoryBullet()
+{
+	RakNet::BitStream bitStream;
 
+	bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
+	bitStream.Write((unsigned char)MSG_RPC);
+
+	bitStream.Write(owner->GetParentScene()->GetUid());
+	bitStream.Write(owner->GetUid());
+
+	bitStream.Write(GetUid());
+
+	bitStream.Write(GetHashCode("FireRPC"));
+	bitStream.Write(owner->GetUid());
+	NetworkEngine::Instance().SendPacket(bitStream);
+	SceneManager::Instance().RemoveEntity(owner->GetUid());
+	LOG("Bullet Destroyed");
 }
