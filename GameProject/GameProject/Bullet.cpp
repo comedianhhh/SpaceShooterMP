@@ -1,14 +1,15 @@
 #include "GameCore.h"
 #include "Bullet.h"
 #include "SceneManager.h"
-
+#include "NetworkEngine.h"
 IMPLEMENT_DYNAMIC_CLASS(Bullet)
 
 void Bullet::Initialize()
 {
 	Component::Initialize();
-
-	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
+	collider = owner->GetComponent<BoxCollider>();
+	RegisterRPC(GetHashCode("FireRPC"), std::bind(&Bullet::RPC, this, std::placeholders::_1));
+	LOG("Bullet Initialized");
 }
 
 void Bullet::Update()
@@ -34,6 +35,8 @@ void Bullet::Move()
 {
 	owner->GetTransform().position += direction * speed * Time::Instance().DeltaTime();
 }
+
+
 void Bullet::CheckBounds()
 {
 	if (owner->GetTransform().position.y > RenderSystem::Instance().GetWindowSize().y ||
@@ -43,6 +46,7 @@ void Bullet::CheckBounds()
 	{
 		// Destroy or deactivate this bullet
 		owner->GetParentScene()->RemoveEntity(owner->GetGuid());
+		LOG("Bullet Destroyed");
 		return;
 	}
 
@@ -57,7 +61,12 @@ void Bullet::CheckCollision()
 		if (other->GetOwner()->GetName() == "Enemy")
 		{
 			SceneManager::Instance().RemoveEntity(owner->GetUid());
+			LOG("Bullet collided with enemy");
 		}
 		break;
 	}
+}
+void Bullet::RPC(RakNet::BitStream& bitStream)
+{
+
 }

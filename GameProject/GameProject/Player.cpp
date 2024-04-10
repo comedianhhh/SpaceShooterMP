@@ -14,9 +14,9 @@ void Player::Initialize()
 {
 	Component::Initialize();
 
-	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
-	health = (Health*)owner->GetComponent("Health");
-	RegisterRPC(GetHashCode("RPC"), std::bind(&Player::RPC, this, std::placeholders::_1));
+	collider = owner->GetComponent<BoxCollider>();
+	health = owner->GetComponent<Health>();
+	RegisterRPC(GetHashCode("FireRPC"), std::bind(&Player::RPC, this, std::placeholders::_1));
 }
 
 void Player::Update()
@@ -45,11 +45,6 @@ void Player::Load(json::JSON& node)
 	}
 }
 
-void Player::RPC(RakNet::BitStream& bitStream)
-{
-	float value = 0.0f;
-	bitStream.Read(value);
-}
 void Player::CheckCollision()
 {
 	for (const auto& other : collider->OnCollisionEnter())
@@ -63,37 +58,103 @@ void Player::CheckCollision()
 	}
 }
 
-void Player::Fire() 
+//void Player::Fire() 
+//{
+//
+//	Entity* bullet = owner->GetParentScene()->CreateEntity();
+//	Sprite* bulletSprite = (Sprite*)bullet->CreateComponent("Sprite");
+//	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
+//	bulletSprite->SetTextureAsset(bulletTexture);
+//
+//	std::vector<std::string> components = { "BoxCollider" };
+//	bullet->AddComponents(components);
+//	bullet->GetTransform().position = owner->GetTransform().position;
+//	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
+//
+//
+//	Vec2 targetPos;
+//	// Get mouse position and adjust by camera position.
+//	int mouseX, mouseY;
+//	SDL_GetMouseState(&mouseX, &mouseY);
+//	targetPos = Vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
+//	// Calculate direction and set velocity.
+//	Vec2 direction = targetPos - owner->GetTransform().position;
+//	direction.Normalize();
+//	float angleRadians = atan2(direction.y, direction.x);
+//
+//
+//	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
+//
+//	// Assuming bullet has a ProjectileComponent to set its velocity.
+//	Bullet* bulletcomponent = (Bullet*)bullet->CreateComponent("Bullet");
+//	bulletcomponent->SetSpeed(100.0f);
+//	bulletcomponent->SetDirection(direction);
+//
+//}
+
+void Player::Fire()
 {
-	LOG("Player fired");
-	Entity* bullet = owner->GetParentScene()->CreateEntity();
-	Sprite* bulletSprite = (Sprite*)bullet->CreateComponent("Sprite");
+	if (NetworkEngine::Instance().IsClient())
+	{
+		Vec2 targetPos;
+		int mouseX, mouseY;
+		SDL_GetMouseState(&mouseX, &mouseY);
+		targetPos = Vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
+		Vec2 direction = targetPos - owner->GetTransform().position;
+		direction.Normalize();
+
+
+		RakNet::BitStream bitStream;
+
+		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
+		bitStream.Write((unsigned char)MSG_RPC);
+
+		bitStream.Write(owner->GetParentScene()->GetUid());
+		bitStream.Write(owner->GetUid());
+
+		bitStream.Write(GetUid());
+
+		bitStream.Write(GetHashCode("FireRPC"));
+
+		bitStream.Write(direction.x);
+		bitStream.Write(direction.y);
+		LOG(direction.x << " " << direction.y);
+		bitStream.Write(owner->GetTransform().position.x);
+		bitStream.Write(owner->GetTransform().position.y);
+		NetworkEngine::Instance().SendPacket(bitStream);
+	}
+}
+void Player::RPC(RakNet::BitStream& bitStream)
+{
+	Vec2 direction;
+	Vec2 position;
+	float value = 0;
+	bitStream.Read(value);
+	direction.x = value;
+	bitStream.Read(value);
+	direction.y = value;
+	bitStream.Read(value);
+	position.x = value;
+	bitStream.Read(value);
+	position.y = value;
+
+	Entity* bullet = SceneManager::Instance().CreateEntity();
+	Sprite* bulletSprite = bullet->CreateComponent<Sprite>();
 	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
 	bulletSprite->SetTextureAsset(bulletTexture);
 
 	std::vector<std::string> components = { "BoxCollider" };
 	bullet->AddComponents(components);
-	bullet->GetTransform().position = owner->GetTransform().position;
+
 	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
 
-
-	Vec2 targetPos;
-	// Get mouse position and adjust by camera position.
-	int mouseX, mouseY;
-	SDL_GetMouseState(&mouseX, &mouseY);
-	targetPos = Vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
-	// Calculate direction and set velocity.
-	Vec2 direction = targetPos - owner->GetTransform().position;
-	direction.Normalize();
-	float angleRadians = atan2(direction.y, direction.x);
-
-
-	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
-
-	// Assuming bullet has a ProjectileComponent to set its velocity.
-	Bullet* bulletcomponent = (Bullet*)bullet->CreateComponent("Bullet");
+	Bullet* bulletcomponent =bullet->CreateComponent<Bullet>();
+	bullet->GetTransform().position = position;
 	bulletcomponent->SetSpeed(100.0f);
 	bulletcomponent->SetDirection(direction);
 
-}
+	float angleRadians = atan2(direction.y, direction.x);
+	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
 
+
+}
