@@ -28,6 +28,7 @@ private:
     void Move();
     void CheckCollision();
     void CheckBounds();
+    void DestoryAsteroid();
 };
 
 #endif // !_AST_H_
