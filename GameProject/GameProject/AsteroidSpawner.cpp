@@ -1,6 +1,7 @@
 #include "GameCore.h"
 #include "AsteroidSpawner.h"
 #include "Sprite.h"
+#include "GameHandler.h"
 #include <random>
 
 void AsteroidSpawner::Initialize()
@@ -9,6 +10,9 @@ void AsteroidSpawner::Initialize()
 
 void AsteroidSpawner::Update()
 {
+	if (!GameHandler::Instance().IsGameStarted())
+		return;
+
 	lastSpawnTime -= Time::Instance().DeltaTime();
 
 	if (lastSpawnTime <= 0)
