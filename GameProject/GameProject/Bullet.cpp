@@ -84,7 +84,12 @@ void Bullet::RPC(RakNet::BitStream& bitStream)
 		float x, y;
 		bitStream.Read(x);
 		bitStream.Read(y);
-		owner->GetTransform().position = Vec2(x, y);
+		float servertime;
+		bitStream.Read(time);
+		float currentTime= Time::Instance().TotalTime();
+		float timerdiff= currentTime - servertime;
+		Vec2 newPosition= owner->GetTransform().position+ direction * speed* timerdiff;
+		owner->GetTransform().position = newPosition;
 		LOG("Bullet Position Updated via RPC");
 	}
 }
@@ -114,6 +119,7 @@ void Bullet::SendBulletUpdate(bool shouldDestroy)
 		if (!shouldDestroy) {
 			bitStream.Write(owner->GetTransform().position.x);
 			bitStream.Write(owner->GetTransform().position.y);
+			bitStream.Write(Time::Instance().TotalTime());
 		}
 
 		// Send the packet
