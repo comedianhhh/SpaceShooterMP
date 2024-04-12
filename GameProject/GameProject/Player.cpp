@@ -58,39 +58,6 @@ void Player::CheckCollision()
 	}
 }
 
-//void Player::Fire() 
-//{
-//
-//	Entity* bullet = owner->GetParentScene()->CreateEntity();
-//	Sprite* bulletSprite = (Sprite*)bullet->CreateComponent("Sprite");
-//	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
-//	bulletSprite->SetTextureAsset(bulletTexture);
-//
-//	std::vector<std::string> components = { "BoxCollider" };
-//	bullet->AddComponents(components);
-//	bullet->GetTransform().position = owner->GetTransform().position;
-//	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
-//
-//
-//	Vec2 targetPos;
-//	// Get mouse position and adjust by camera position.
-//	int mouseX, mouseY;
-//	SDL_GetMouseState(&mouseX, &mouseY);
-//	targetPos = Vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
-//	// Calculate direction and set velocity.
-//	Vec2 direction = targetPos - owner->GetTransform().position;
-//	direction.Normalize();
-//	float angleRadians = atan2(direction.y, direction.x);
-//
-//
-//	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
-//
-//	// Assuming bullet has a ProjectileComponent to set its velocity.
-//	Bullet* bulletcomponent = (Bullet*)bullet->CreateComponent("Bullet");
-//	bulletcomponent->SetSpeed(100.0f);
-//	bulletcomponent->SetDirection(direction);
-//
-//}
 
 void Player::Fire()
 {
