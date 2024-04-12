@@ -102,6 +102,7 @@ void Player::Fire()
 }
 void Player::RPC(RakNet::BitStream& bitStream)
 {
+	if(NetworkEngine::Instance().GetNumOfConnections()<2) return;
 	Vec2 direction;
 	Vec2 position;
 	float value = 0;
