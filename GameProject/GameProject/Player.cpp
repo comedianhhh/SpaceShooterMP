@@ -119,7 +119,7 @@ void Player::RPC(RakNet::BitStream& bitStream)
 	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
 	bulletSprite->SetTextureAsset(bulletTexture);
 
-	bullet->CreateComponent<BoxCollider>();
+	BoxCollider* collidercomponent=bullet->CreateComponent<BoxCollider>();
 
 	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
 
