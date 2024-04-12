@@ -41,7 +41,7 @@ void AsteroidSpawner::SpawnAsteroid()
 
 	bitStream.Write(GetHashCode("AstRPC"));
 
-	bitStream.Write(GetRandom(0.f, RenderSystem::Instance().GetWindowSize().x);
+	bitStream.Write(GetRandom(0.f, RenderSystem::Instance().GetWindowSize().x));
 	bitStream.Write(0);
 	NetworkEngine::Instance().SendPacket(bitStream);
 

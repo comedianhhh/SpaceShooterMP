@@ -23,6 +23,10 @@ private:
     Vec2 direction = Vec2::Zero;
     float speed = 5.0f;
 
+    float updateTimer = 1.0f;
+    void SendAsteroidUpdate(bool shouldDestroy);
+
+
     void RPC(RakNet::BitStream& bitStream);
 
     void Move();

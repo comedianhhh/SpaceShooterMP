@@ -17,6 +17,13 @@ void Asteroid::Initialize()
 void Asteroid::Update()
 {
 	Move();
+	if (NetworkEngine::Instance().IsServer()) {
+		updateTimer -= Time::Instance().DeltaTime();
+		if (updateTimer <= 0.0f) {
+			SendAsteroidUpdate(false);
+			updateTimer = 1.0f; // Reset timer
+		}
+	}
 	CheckCollision();
 	CheckBounds();
 }
@@ -34,6 +41,43 @@ void Asteroid::CheckBounds()
 		return;
 	}
 
+}
+
+void Asteroid::SendAsteroidUpdate(bool shouldDestroy)
+{
+	if (NetworkEngine::Instance().IsServer())
+	{
+		RakNet::BitStream bitStream;
+
+
+		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
+		bitStream.Write((unsigned char)MSG_RPC);
+
+		bitStream.Write(owner->GetParentScene()->GetUid());
+		bitStream.Write(owner->GetUid());
+
+		bitStream.Write(GetUid());
+
+		bitStream.Write(GetHashCode("AstRPC"));
+
+		unsigned char actionFlag = shouldDestroy ? 1 : 0;
+		bitStream.Write(actionFlag);
+
+		// If not destroying, include position data
+		if (!shouldDestroy) {
+			bitStream.Write(owner->GetTransform().position.x);
+			bitStream.Write(owner->GetTransform().position.y);
+			bitStream.Write(Time::Instance().TotalTime());
+		}
+
+		// Send the packet
+		NetworkEngine::Instance().SendPacket(bitStream);
+
+		// If destroying, also remove the entity immediately on the server
+		if (shouldDestroy) {
+			SceneManager::Instance().RemoveEntity(owner->GetUid());
+		}
+	}
 }
 
 void Asteroid::RPC(RakNet::BitStream& bitStream)
