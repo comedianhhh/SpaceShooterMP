@@ -8,8 +8,8 @@ IMPLEMENT_DYNAMIC_CLASS(Asteroid)
 void Asteroid::Initialize()
 {
 	Component::Initialize();
-	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
-	health = (Health*)owner->GetComponent("Health");
+	collider = owner->GetComponent<BoxCollider>();
+	health = owner->GetComponent<Health>();
 	direction = Vec2(0, 1);
 }
 
@@ -44,7 +44,6 @@ void Asteroid::Move()
 void Asteroid::CheckCollision()
 {
 	if (collider == nullptr) return;
-	LOG("Asteroid has collided!!");
 	for (const auto& other : collider->OnCollisionEnter())
 	{
 		if (other->GetOwner()->HasComponent<Bullet>())

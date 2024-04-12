@@ -38,8 +38,8 @@ void AsteroidSpawner::SpawnAsteroid()
 
 	Entity* asteroid = SceneManager::Instance().CreateEntity();
 	Sprite* asteroidSprite = asteroid->CreateComponent<Sprite>();
+	BoxCollider* collidercomponent = asteroid->CreateComponent<BoxCollider>();
 	asteroid->CreateComponent<Asteroid>();
-	asteroid->CreateComponent<BoxCollider>();
 	if (type == 0)
 	{
 		TextureAsset* asteroidTexture = (TextureAsset*)AssetManager::Instance().GetAsset("b4542c23-413d-4022-aeff-8b8f3cfb8277");
@@ -51,6 +51,7 @@ void AsteroidSpawner::SpawnAsteroid()
 		asteroidSprite->SetTextureAsset(asteroidTexture);
 	}
 	asteroid->GetTransform().position = position;
+
 }
 Vec2 AsteroidSpawner::GetRandomPosition() 
 {

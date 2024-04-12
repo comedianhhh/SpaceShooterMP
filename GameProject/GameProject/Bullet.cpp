@@ -60,7 +60,6 @@ void Bullet::CheckBounds()
 void Bullet::CheckCollision()
 {
 	if (collider == nullptr) return;
-	LOG("Bullet has collided!!");
 	for (const auto& other : collider->OnCollisionEnter())
 	{
 		// Here, you can check for collision with specific entities

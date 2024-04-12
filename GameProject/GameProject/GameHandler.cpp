@@ -14,7 +14,9 @@ void GameHandler::Initialize()
 
 void GameHandler::Update() 
 {
-	if (NetworkEngine::Instance().IsClient() && !bPlayerSpawned) {
+	
+	if (NetworkEngine::Instance().IsClient() && !bPlayerSpawned&&NetworkEngine::Instance().GetNumOfConnections()==1) 
+	{
 		if (spawnDelay > 0) {
 			spawnDelay -= Time::Instance().DeltaTime();
 		}
