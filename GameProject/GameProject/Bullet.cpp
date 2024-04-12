@@ -2,6 +2,7 @@
 #include "Bullet.h"
 #include "SceneManager.h"
 #include "NetworkEngine.h"
+#include "Asteroid.h"
 IMPLEMENT_DYNAMIC_CLASS(Bullet)
 
 void Bullet::Initialize()
@@ -13,16 +14,16 @@ void Bullet::Initialize()
 
 void Bullet::Update()
 {
-	CheckBounds();
-	Move();
 	if (NetworkEngine::Instance().IsServer()) {
+		CheckBounds();
+		Move();
 		updateTimer -= Time::Instance().DeltaTime();
 		if (updateTimer <= 0.0f) {
 			SendBulletUpdate(false);
 			updateTimer = 1.0f; // Reset timer
 		}
+		CheckCollision();
 	}
-	CheckCollision();
 
 }
 
@@ -63,10 +64,10 @@ void Bullet::CheckCollision()
 	for (const auto& other : collider->OnCollisionEnter())
 	{
 		// Here, you can check for collision with specific entities
-		if (other->GetOwner()->GetName() == "Enemy")
+		if (other->GetOwner()->HasComponent<Asteroid>())
 		{
 			SendBulletUpdate(true);
-			LOG("Bullet collided with enemy");
+			LOG("Bullet collided with Asteroid");
 		}
 		break;
 	}
@@ -85,10 +86,11 @@ void Bullet::RPC(RakNet::BitStream& bitStream)
 		bitStream.Read(x);
 		bitStream.Read(y);
 		float servertime;
-		bitStream.Read(time);
-		float currentTime= Time::Instance().TotalTime();
-		float timerdiff= currentTime - servertime;
-		Vec2 newPosition= owner->GetTransform().position+ direction * speed* timerdiff;
+		bitStream.Read(servertime);
+		float currentTime = Time::Instance().TotalTime();
+		float timerdiff = currentTime - servertime;
+		Vec2 newPosition = owner->GetTransform().position + direction * speed * timerdiff;
+		//Vec2 newPosition = owner->GetTransform().position + direction * speed;
 		owner->GetTransform().position = newPosition;
 		LOG("Bullet Position Updated via RPC");
 	}

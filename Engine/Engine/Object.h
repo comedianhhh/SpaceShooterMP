@@ -15,6 +15,7 @@ public:
     std::string& GetName() { return name; }
     std::string& GetGuid() { return guid; }
     STRCODE GetUid() const { return uid; }
+    void SetName(std::string name) { this->name = name; }
 
     void Serialize(RakNet::BitStream& bitStream) const;
     void Deserialize(RakNet::BitStream& bitStream);

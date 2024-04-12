@@ -27,6 +27,7 @@ void Engine::Initialize()
 	if (serverClientChoice != 2)
 	{
 		NetworkEngine::Instance().Initialize((serverClientChoice==0));
+		Time::Instance().Initialize();
 	}
 
 	// Load the managers
