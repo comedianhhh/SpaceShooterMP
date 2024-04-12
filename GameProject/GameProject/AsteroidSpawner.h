@@ -21,6 +21,7 @@ private:
 
     float GetRandom(float min, float max);
 
+    void RPC(RakNet::BitStream& bitStream);
 };
 
 #endif // !_AST_SPAWNER_H_

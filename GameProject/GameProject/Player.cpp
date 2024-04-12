@@ -70,7 +70,6 @@ void Player::Fire()
 		Vec2 direction = targetPos - owner->GetTransform().position;
 		direction.Normalize();
 
-
 		RakNet::BitStream bitStream;
 
 		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);

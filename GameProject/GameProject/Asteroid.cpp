@@ -9,7 +9,7 @@ void Asteroid::Initialize()
 
 	collider = (BoxCollider*)owner->GetComponent("BoxCollider");
 	health = (Health*)owner->GetComponent("Health");
-	RegisterRPC(GetHashCode("RPC"), std::bind(&Asteroid::RPC, this, std::placeholders::_1));
+	RegisterRPC(GetHashCode("AstRPC"), std::bind(&Asteroid::RPC, this, std::placeholders::_1));
 
 	direction = Vec2(0, 1);
 }
@@ -18,6 +18,7 @@ void Asteroid::Update()
 {
 	Move();
 	CheckCollision();
+	CheckBounds();
 }
 
 void Asteroid::CheckBounds()
@@ -28,7 +29,8 @@ void Asteroid::CheckBounds()
 		owner->GetTransform().position.x < 0)
 	{
 		// Destroy or deactivate this bullet
-		owner->GetParentScene()->RemoveEntity(owner->GetGuid());
+		
+		DestoryAsteroid();
 		return;
 	}
 
@@ -56,8 +58,8 @@ void Asteroid::CheckCollision()
 		if (other->GetOwner()->GetName() == "Bullet")
 		{
 			health -= 1;
-			if(health == 0)
-				SceneManager::Instance().RemoveEntity(owner->GetUid());
+			if (health == 0)
+				DestoryAsteroid();
 		}
 		break;
 	}
