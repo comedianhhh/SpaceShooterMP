@@ -14,14 +14,11 @@ public:
 
 private:
 
-    float frequency = 5.f;
-    float lastSpawnTime = 0.0f;
+    float frequency = 1.f;
+    float lastSpawnTime = 1.0f;
 
     void SpawnAsteroid();
-
-    float GetRandom(float min, float max);
-
-    void RPC(RakNet::BitStream& bitStream);
+    Vec2 GetRandomPosition();
 };
 
 #endif // !_AST_SPAWNER_H_

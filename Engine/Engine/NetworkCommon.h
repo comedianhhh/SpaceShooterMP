@@ -13,4 +13,5 @@ enum NetworkPacketIds
 	MSG_CREATE_COMPONENT,
 	MSG_SNAPSHOT,
 	MSG_RPC,
+	MSG_NEW_GAME,
 };

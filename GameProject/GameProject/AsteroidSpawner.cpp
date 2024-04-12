@@ -6,75 +6,56 @@
 #include "NetworkRPC.h"
 #include "Asteroid.h"
 #include <random>
+#include "BoxCollider.h"
 
+IMPLEMENT_DYNAMIC_CLASS(AsteroidSpawner)
 void AsteroidSpawner::Initialize()
 {
-	RegisterRPC(GetHashCode("AstRPC"), std::bind(&AsteroidSpawner::RPC, this, std::placeholders::_1));
+	Component::Initialize();
+	srand((unsigned int)time(NULL));
 
 }
 
 void AsteroidSpawner::Update()
 {
-	if (NetworkEngine::Instance().IsServer())
+	if (NetworkEngine::Instance().IsServer()&&NetworkEngine::Instance().GetNumOfConnections()>1)
 	{
-		if (!GameHandler::Instance().IsGameStarted())
-			return;
-
 		lastSpawnTime -= Time::Instance().DeltaTime();
-
 		if (lastSpawnTime <= 0)
+		{
 			SpawnAsteroid();
+			lastSpawnTime = frequency + rand() % 2;
+
+		}
 	}
 }
 
 void AsteroidSpawner::SpawnAsteroid()
 {
 	RakNet::BitStream bitStream;
+	int type = rand() % 2; // Assuming two types for demonstration
+	Vec2 position = GetRandomPosition();
 
-	bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
-	bitStream.Write((unsigned char)MSG_RPC);
-
-	bitStream.Write(owner->GetParentScene()->GetUid());
-	bitStream.Write(owner->GetUid());
-
-	bitStream.Write(GetUid());
-
-	bitStream.Write(GetHashCode("AstRPC"));
-
-	bitStream.Write(GetRandom(0.f, RenderSystem::Instance().GetWindowSize().x);
-	bitStream.Write(0);
-	NetworkEngine::Instance().SendPacket(bitStream);
-
-	lastSpawnTime = frequency + GetRandom(-1.f, 2.f);
-
-}
-
-float AsteroidSpawner::GetRandom(float min, float max)
-{
-	/*std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> dis(min, max);
-
-	float random_number = dis(gen);*/
-	return 1.f;
-}
-
-void AsteroidSpawner::RPC(RakNet::BitStream& bitStream)
-{
-	Vec2 position;
-
-	float value;
-
-	bitStream.Read(value);
-	position.x = value;
-	bitStream.Read(value);
-	position.y = value;
-
-	LOG("Asteroid Spawned");
 	Entity* asteroid = SceneManager::Instance().CreateEntity();
-	Sprite* asteroidSprite = (Sprite*)asteroid->CreateComponent("Enemy");
-	TextureAsset* asteroidTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");	//@TODO Change this to sprite asset
-	asteroidSprite->SetTextureAsset(asteroidTexture);
-
-	asteroid->GetTransform().position;
+	Sprite* asteroidSprite = asteroid->CreateComponent<Sprite>();
+	asteroid->CreateComponent<Asteroid>();
+	asteroid->CreateComponent<BoxCollider>();
+	if (type == 0)
+	{
+		TextureAsset* asteroidTexture = (TextureAsset*)AssetManager::Instance().GetAsset("b4542c23-413d-4022-aeff-8b8f3cfb8277");
+		asteroidSprite->SetTextureAsset(asteroidTexture);
+	}
+	else
+	{
+		TextureAsset* asteroidTexture = (TextureAsset*)AssetManager::Instance().GetAsset("0b0a0a2e-cf1f-4195-9ca5-9868558b0701");
+		asteroidSprite->SetTextureAsset(asteroidTexture);
+	}
+	asteroid->GetTransform().position = position;
 }
+Vec2 AsteroidSpawner::GetRandomPosition() 
+{
+	float x = rand()% RenderSystem::Instance().GetWindowSize().x;
+	float y = 10.0f;
+	return Vec2(x, y);
+}
+

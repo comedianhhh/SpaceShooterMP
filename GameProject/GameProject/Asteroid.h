@@ -21,14 +21,12 @@ public:
 
 private:
     Vec2 direction = Vec2::Zero;
-    float speed = 5.0f;
-
-    void RPC(RakNet::BitStream& bitStream);
+    float speed = 50.0f;
+    float updateTimer=0.0f;
 
     void Move();
     void CheckCollision();
     void CheckBounds();
-    void DestoryAsteroid();
 };
 
 #endif // !_AST_H_
