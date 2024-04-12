@@ -8,6 +8,7 @@
 IMPLEMENT_DYNAMIC_CLASS(AsteroidSpawner)
 void AsteroidSpawner::Initialize()
 {
+	LOG("Asteroid Spawner Spawned");
 }
 
 void AsteroidSpawner::Update()
