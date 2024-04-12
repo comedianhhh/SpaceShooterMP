@@ -14,6 +14,8 @@ public:
 	bool IsClient() { return isClient; }
 	bool IsServer() { return isServer; }
 	void SendPacket(RakNet::BitStream& bs);
+	int GetNumOfConnections() { return connections.size(); }
+	RakNet::RakPeerInterface* rakInterface;
 private:
 	void Initialize(bool _isServer);
 	void InitializeNetwork();
@@ -29,7 +31,6 @@ private:
 	std::string ipAddress;
 	NetworkState state;
 
-	RakNet::RakPeerInterface* rakInterface;
 	std::vector<RakNet::RakNetGUID> connections;
 
 	friend class Engine;

@@ -5,23 +5,20 @@
 #include "Component.h"
 class GameHandler : public Component
 {
-	DECLARE_SINGLETON(GameHandler)
+	DECLARE_DYNAMIC_DERIVED_CLASS(GameHandler,Component)
 
 private:
-
 	bool bGameStarted = false;
-
-	int NoPlayers = 0;
-
-
-
+	bool bPlayerSpawned = false;
+	void SpawnPlayer();
+	float spawnDelay = 1.0f;
+	Vec2 GenerateUniformPosition();
 public:
-
 	void Update() override;
+	void Initialize() override;
+	bool IsGameStarted() const { return bGameStarted; }
+	void RPC(RakNet::BitStream& bitStream);
 
-	bool IsGameStarted() { return bGameStarted; }
-
-	void StartGame() { bGameStarted = true; }
 };
 
 #endif // !_GAME_HANDLER_H_

@@ -8,7 +8,7 @@ class BoxCollider;
 
 class Asteroid : public Component
 {
-    DECLARE_DYNAMIC_DERIVED_CLASS(Player, Component)
+    DECLARE_DYNAMIC_DERIVED_CLASS(Asteroid, Component)
 
 public:
     void Initialize() override;

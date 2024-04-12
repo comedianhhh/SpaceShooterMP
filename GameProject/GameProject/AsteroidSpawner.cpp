@@ -4,14 +4,16 @@
 #include "GameHandler.h"
 #include <random>
 
+
+IMPLEMENT_DYNAMIC_CLASS(AsteroidSpawner)
 void AsteroidSpawner::Initialize()
 {
 }
 
 void AsteroidSpawner::Update()
 {
-	if (!GameHandler::Instance().IsGameStarted())
-		return;
+	//if (!GameHandler::Instance().IsGameStarted())
+	//	return;
 
 	lastSpawnTime -= Time::Instance().DeltaTime();
 

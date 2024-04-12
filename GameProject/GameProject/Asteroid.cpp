@@ -2,6 +2,8 @@
 #include "Asteroid.h"
 #include "BoxCollider.h"
 
+
+IMPLEMENT_DYNAMIC_CLASS(Asteroid)
 void Asteroid::Initialize()
 {
 	Component::Initialize();

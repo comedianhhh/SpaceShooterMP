@@ -15,6 +15,10 @@ public:
     void Initialize() override;
     void Update() override;
     void Load(json::JSON&) override;
+    void SetID(uint64_t ID) { PlayerID = ID; }
+
+	void SerializeCreate(RakNet::BitStream& bitStream) const override;
+	void DeserializeCreate(RakNet::BitStream& bitStream) override;
 private:
 
 
@@ -22,6 +26,8 @@ private:
     STRCODE game_over_scene = -1;
     Health* health = nullptr;
     Entity* networkedEntity = nullptr;
+    uint64_t PlayerID;
+
 
 private:
     void RPC(RakNet::BitStream& bitStream);
