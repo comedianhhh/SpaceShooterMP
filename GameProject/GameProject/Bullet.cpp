@@ -60,7 +60,7 @@ void Bullet::CheckBounds()
 void Bullet::CheckCollision()
 {
 	if (collider == nullptr) return;
-
+	LOG("Bullet has collided!!");
 	for (const auto& other : collider->OnCollisionEnter())
 	{
 		// Here, you can check for collision with specific entities
@@ -92,7 +92,6 @@ void Bullet::RPC(RakNet::BitStream& bitStream)
 		Vec2 newPosition = owner->GetTransform().position + direction * speed * timerdiff;
 		//Vec2 newPosition = owner->GetTransform().position + direction * speed;
 		owner->GetTransform().position = newPosition;
-		LOG("Bullet Position Updated via RPC");
 	}
 }
 

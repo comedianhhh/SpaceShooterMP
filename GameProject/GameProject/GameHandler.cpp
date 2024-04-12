@@ -9,7 +9,6 @@ void GameHandler::Initialize()
 {
 	Component::Initialize();
 	RegisterRPC(GetHashCode("RPC"), std::bind(&GameHandler::RPC, this, std::placeholders::_1));
-	LOG("GameHandler Initialized");
 	srand((unsigned int)time(NULL));
 }
 
@@ -17,7 +16,7 @@ void GameHandler::Update()
 {
 	if (NetworkEngine::Instance().IsClient() && !bPlayerSpawned) {
 		if (spawnDelay > 0) {
-			spawnDelay -= Time::Instance().DeltaTime();  // Reduce the delay timer by the elapsed time
+			spawnDelay -= Time::Instance().DeltaTime();
 		}
 		else {
 			SpawnPlayer();
@@ -47,7 +46,6 @@ void GameHandler::SpawnPlayer()
 	bitStream.Write(newPosition.y);
 	bitStream.Write(NetworkEngine::Instance().rakInterface->GetMyGUID());
 	NetworkEngine::Instance().SendPacket(bitStream);
-	LOG("Player RPC sent");
 }
 
 
@@ -75,8 +73,6 @@ void GameHandler::RPC(RakNet::BitStream& bitStream)
 	Player* playercomponent = newplayer->CreateComponent<Player>();
 	playercomponent->SetID(id);
 	newplayer->GetTransform().position = position;
-
-	LOG("Player spawned");
 }
 
 Vec2 GameHandler::GenerateUniformPosition() {

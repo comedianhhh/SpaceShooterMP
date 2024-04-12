@@ -6,6 +6,7 @@
 #include "NetworkRPC.h"
 #include "NetworkEngine.h"
 #include "Bullet.h"
+#include"Asteroid.h"
 #define NDEBUG_PLAYER
 
 IMPLEMENT_DYNAMIC_CLASS(Player)
@@ -61,12 +62,13 @@ void Player::CheckCollision()
 {
 	for (const auto& other : collider->OnCollisionEnter())
 	{
-		if (other->GetOwner()->GetName() != "Enemy")
+		if (other->GetOwner()->HasComponent<Asteroid>())
 		{
+			LOG("Player collided with Asteroid");
 			continue;
 		}
 
-		LOG("Player collided with enemy");
+		
 	}
 }
 
@@ -117,14 +119,13 @@ void Player::RPC(RakNet::BitStream& bitStream)
 	TextureAsset* bulletTexture = (TextureAsset*)AssetManager::Instance().GetAsset("872a3acb-8431-4d8e-bed2-a330f447a98d");
 	bulletSprite->SetTextureAsset(bulletTexture);
 
-	std::vector<std::string> components = { "BoxCollider" };
-	bullet->AddComponents(components);
+	bullet->CreateComponent<BoxCollider>();
 
 	bullet->GetTransform().Scale(Vec2(1.3, 1.3));
 
 	Bullet* bulletcomponent =bullet->CreateComponent<Bullet>();
 	bullet->GetTransform().position = position;
-	bulletcomponent->SetSpeed(300.0f);
+	bulletcomponent->SetSpeed(400.0f);
 	bulletcomponent->SetDirection(direction);
 
 	float angleRadians = atan2(direction.y, direction.x);

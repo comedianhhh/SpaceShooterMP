@@ -179,6 +179,12 @@ void SceneManager::ProcessPacket(RakNet::BitStream& bitStream)
 			}
 		}
 		break;
+
+		case MSG_NEW_GAME:
+		{
+			
+		}
+		break;
 	}
 }
 
