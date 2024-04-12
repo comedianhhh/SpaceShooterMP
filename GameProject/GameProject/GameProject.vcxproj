@@ -187,7 +187,6 @@
     <ClCompile Include="AsteroidSpawner.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameHandler.cpp" />
-    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Game_Register.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="main.cpp" />
@@ -199,7 +198,6 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="GameHandler.h" />
-    <ClInclude Include="GameOver.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
