@@ -15,6 +15,7 @@ public:
 	float GetBroadPhaseRadius() const override { return m_radius; };
 	bool HandleCollision(Collider* other) override { return true; };
 	ColliderType GetType() const override { return ColliderType::Circle; };
+	void Initialize() override;
 
 private:
 	float m_radius = 0;

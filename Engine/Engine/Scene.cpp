@@ -215,6 +215,14 @@ void Scene::PostUpdate()
 {
 	for (Entity* entity : entitiesToDestroy)
 	{
+		if (NetworkEngine::Instance().IsServer()) {
+			RakNet::BitStream bs;
+			bs.Write((unsigned char)NetworkPacketIds::MSG_SCENE_MANAGER);
+			bs.Write((unsigned char)NetworkPacketIds::MSG_DESTROY_ENTITY);
+			bs.Write(uid);
+			bs.Write(entity->GetUid());
+			NetworkEngine::Instance().SendPacket(bs);
+		}
 		entity->Destroy();
 		delete entity;
 		entities.remove(entity);
@@ -333,5 +341,21 @@ void Scene::InvokeRPC(RakNet::BitStream& bitStream)
 			networkRPC->InvokeRPC(bitStream);
 			break;
 		}
+	}
+}
+void Scene::DeserializeRemoveEntity(RakNet::BitStream& bitStream)
+{
+	STRCODE entityId = 0;
+	bitStream.Read(entityId);
+
+	Entity* entityToRemove = FindEntity(entityId);
+
+	if (entityToRemove != nullptr) {
+		entityToRemove->Destroy();
+		delete entityToRemove;
+		entities.remove(entityToRemove);
+	}
+	else {
+		LOG("Entity to remove not found");
 	}
 }

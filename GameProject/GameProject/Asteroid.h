@@ -15,18 +15,20 @@ public:
     void Update() override;
 
     
-    Health* health = nullptr;
+    int health = 3;
     Entity* networkedEntity = nullptr;
     BoxCollider* collider = nullptr;
 
 private:
     Vec2 direction = Vec2::Zero;
-    float speed = 50.0f;
-    float updateTimer=0.0f;
+    float speed = 100.0f;
+    float updateTimer=1.0f;
 
     void Move();
     void CheckCollision();
     void CheckBounds();
+    void RPC(RakNet::BitStream& bitStream);
+    void SendUpdate();
 };
 
 #endif // !_AST_H_

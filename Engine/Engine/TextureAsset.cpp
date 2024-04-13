@@ -10,13 +10,14 @@ void TextureAsset::Initialize()
 
 	SDL_Surface* image = IMG_Load(filepath.c_str());
 
-	if (RenderSystem::Instance().HasRenderer() == true)
-	{
+	if (RenderSystem::Instance().HasRenderer()) {
 		texture = SDL_CreateTextureFromSurface(&RenderSystem::Instance().GetRenderer(), image);
 		SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-
 	}
-	printf("%s\n", SDL_GetError()); //Returns "Invalid Renderer".
+	else {
+		width = image->w;
+		height = image->h;
+	}
 	SDL_FreeSurface(image);
 }
 

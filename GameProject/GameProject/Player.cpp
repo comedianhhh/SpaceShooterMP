@@ -14,9 +14,7 @@ IMPLEMENT_DYNAMIC_CLASS(Player)
 void Player::Initialize()
 {
 	Component::Initialize();
-
 	collider = owner->GetComponent<BoxCollider>();
-	health = owner->GetComponent<Health>();
 	RegisterRPC(GetHashCode("FireRPC"), std::bind(&Player::RPC, this, std::placeholders::_1));
 }
 
