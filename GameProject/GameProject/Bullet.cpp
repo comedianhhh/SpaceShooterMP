@@ -19,7 +19,7 @@ void Bullet::Update()
 		Move();
 		updateTimer -= Time::Instance().DeltaTime();
 		if (updateTimer <= 0.0f) {
-			SendBulletUpdate(false);
+			SendBulletUpdate();
 			updateTimer = 1.0f; // Reset timer
 		}
 		CheckCollision();
@@ -52,7 +52,7 @@ void Bullet::CheckBounds()
 		owner->GetTransform().position.x > RenderSystem::Instance().GetWindowSize().x ||
 		owner->GetTransform().position.x < 0)
 	{
-		SendBulletUpdate(true);
+		SceneManager::Instance().RemoveEntity(owner->GetUid());
 		return;
 	}
 
@@ -65,37 +65,26 @@ void Bullet::CheckCollision()
 		// Here, you can check for collision with specific entities
 		if (other->GetOwner()->HasComponent<Asteroid>())
 		{
-			SendBulletUpdate(true);
-			LOG("Bullet collided with Asteroid");
+			SceneManager::Instance().RemoveEntity(owner->GetUid());
 		}
 		break;
 	}
 }
 void Bullet::RPC(RakNet::BitStream& bitStream)
 {
-	unsigned char actionFlag;
-	bitStream.Read(actionFlag);
-
-	if (actionFlag == 1) { // 1 indicates destroy
-		SceneManager::Instance().RemoveEntity(owner->GetUid());
-		LOG("Bullet Destroyed via RPC");
-	}
-	else { // 0 indicates an update
-		float x, y;
-		bitStream.Read(x);
-		bitStream.Read(y);
-		float servertime;
-		bitStream.Read(servertime);
-		float currentTime = Time::Instance().TotalTime();
-		float timerdiff = currentTime - servertime;
-		Vec2 newPosition = owner->GetTransform().position + direction * speed * timerdiff;
-		//Vec2 newPosition = owner->GetTransform().position + direction * speed;
-		owner->GetTransform().position = newPosition;
-	}
+	float x, y;
+	bitStream.Read(x);
+	bitStream.Read(y);
+	float servertime;
+	bitStream.Read(servertime);
+	float currentTime = Time::Instance().TotalTime();
+	float timerdiff = currentTime - servertime;
+	Vec2 newPosition = owner->GetTransform().position + direction * speed * timerdiff;
+	owner->GetTransform().position = newPosition;
 }
 
 
-void Bullet::SendBulletUpdate(bool shouldDestroy)
+void Bullet::SendBulletUpdate()
 {
 	if (NetworkEngine::Instance().IsServer())
 	{
@@ -112,22 +101,10 @@ void Bullet::SendBulletUpdate(bool shouldDestroy)
 
 		bitStream.Write(GetHashCode("FireRPC"));
 
-		unsigned char actionFlag = shouldDestroy ? 1 : 0;
-		bitStream.Write(actionFlag);
+		bitStream.Write(owner->GetTransform().position.x);
+		bitStream.Write(owner->GetTransform().position.y);
+		bitStream.Write(Time::Instance().TotalTime());
 
-		// If not destroying, include position data
-		if (!shouldDestroy) {
-			bitStream.Write(owner->GetTransform().position.x);
-			bitStream.Write(owner->GetTransform().position.y);
-			bitStream.Write(Time::Instance().TotalTime());
-		}
-
-		// Send the packet
 		NetworkEngine::Instance().SendPacket(bitStream);
-
-		// If destroying, also remove the entity immediately on the server
-		if (shouldDestroy) {
-			SceneManager::Instance().RemoveEntity(owner->GetUid());
-		}
 	}
 }

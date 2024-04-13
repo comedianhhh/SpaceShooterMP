@@ -3,7 +3,7 @@
 #define PLAYER_H
 
 #include "GameCore.h"
-#include "Health.h"
+
 
 class BoxCollider;
 
@@ -16,7 +16,7 @@ public:
     void Update() override;
     void Load(json::JSON&) override;
     void SetID(uint64_t ID) { PlayerID = ID; }
-
+    uint64_t GetID (){ return PlayerID; }
 	void SerializeCreate(RakNet::BitStream& bitStream) const override;
 	void DeserializeCreate(RakNet::BitStream& bitStream) override;
 private:
@@ -24,7 +24,6 @@ private:
 
     BoxCollider* collider = nullptr;
     STRCODE game_over_scene = -1;
-    Health* health = nullptr;
     Entity* networkedEntity = nullptr;
     uint64_t PlayerID;
 

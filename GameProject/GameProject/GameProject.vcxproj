@@ -188,7 +188,6 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="Game_Register.cpp" />
-    <ClCompile Include="Health.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
@@ -198,7 +197,6 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="GameHandler.h" />
-    <ClInclude Include="Health.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>

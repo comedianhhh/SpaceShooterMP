@@ -103,13 +103,6 @@ void NetworkEngine::ReceivePackets()
 				std::cout << "Got connection from" << packet->systemAddress.ToString(true) << std::endl;
 				connections.push_back(packet->guid);
 				SceneManager::Instance().SerializeSnapshot();
-				if (connections.size() > 1)
-				{
-					RakNet::BitStream bs;
-					bs.Write((unsigned char)NetworkPacketIds::MSG_SCENE_MANAGER);
-					bs.Write((unsigned char)NetworkPacketIds::MSG_NEW_GAME);
-					SendPacket(bs);
-				}
 				break;
 			case ID_CONNECTION_LOST:
 			case ID_DISCONNECTION_NOTIFICATION:

@@ -32,7 +32,7 @@ protected:
 	void DeserializeCreateEntityComponent(RakNet::BitStream& bitStream);
 	void SerializeSnapshot(RakNet::BitStream& bitStream);
 	void DeserializeSnapshot(RakNet::BitStream& bitStream);
-
+	void DeserializeRemoveEntity(RakNet::BitStream& bitStream);
 	void Load(json::JSON&);
 	void Initialize();
 	void Destroy();

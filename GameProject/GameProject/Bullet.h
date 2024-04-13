@@ -26,7 +26,7 @@ private:
 	void CheckCollision();
 	void CheckBounds();
 	void Move();
-	void SendBulletUpdate(bool shouldDestroy);
+	void SendBulletUpdate();
 
 	void RPC(RakNet::BitStream& bitStream);
 };
