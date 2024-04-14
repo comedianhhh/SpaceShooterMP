@@ -22,13 +22,12 @@ public:
 private:
     Vec2 direction = Vec2::Zero;
     float speed = 100.0f;
-    float updateTimer=1.0f;
+
 
     void Move();
     void CheckCollision();
     void CheckBounds();
-    void RPC(RakNet::BitStream& bitStream);
-    void SendUpdate();
+
 };
 
 #endif // !_AST_H_

@@ -9,7 +9,6 @@ void Bullet::Initialize()
 {
 	Component::Initialize();
 	collider = owner->GetComponent<BoxCollider>();
-	RegisterRPC(GetHashCode("FireRPC"), std::bind(&Bullet::RPC, this, std::placeholders::_1));
 }
 
 void Bullet::Update()
@@ -17,11 +16,6 @@ void Bullet::Update()
 	Move();
 	if (NetworkEngine::Instance().IsServer()) {
 		CheckBounds();
-		updateTimer -= Time::Instance().DeltaTime();
-		if (updateTimer <= 0.0f) {
-			SendBulletUpdate();
-			updateTimer = 1.0f; // Reset timer
-		}
 		CheckCollision();
 	}
 
@@ -56,37 +50,7 @@ void Bullet::CheckCollision()
 		break;
 	}
 }
-void Bullet::SendBulletUpdate()
-{
-	if (NetworkEngine::Instance().IsServer())
-	{
-		RakNet::BitStream bitStream;
-		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
-		bitStream.Write((unsigned char)MSG_RPC);
-		bitStream.Write(owner->GetParentScene()->GetUid());
-		bitStream.Write(owner->GetUid());
-		bitStream.Write(GetUid());
-		bitStream.Write(GetHashCode("FireRPC"));
 
-		bitStream.Write(owner->GetTransform().position.x);
-		bitStream.Write(owner->GetTransform().position.y);
-		bitStream.Write(Time::Instance().TotalTime());
-
-		NetworkEngine::Instance().SendPacket(bitStream);
-	}
-}
-void Bullet::RPC(RakNet::BitStream& bitStream)
-{
-	float x, y;
-	bitStream.Read(x);
-	bitStream.Read(y);
-	float servertime;
-	bitStream.Read(servertime);
-	float currentTime = Time::Instance().TotalTime();
-	float timerdiff = currentTime - servertime;
-	Vec2 newPosition = owner->GetTransform().position + direction * speed * timerdiff;
-	owner->GetTransform().position = newPosition;
-}
 
 
 void Bullet::SetDirection(const Vec2& dir)

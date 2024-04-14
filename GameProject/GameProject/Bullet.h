@@ -20,15 +20,12 @@ public:
 private:
 	Vec2 direction = Vec2::Zero;
 	float speed = 100.0f;
-	float updateTimer = 1.0f;
 	BoxCollider* collider = nullptr;
 
 	void CheckCollision();
 	void CheckBounds();
 	void Move();
-	void SendBulletUpdate();
 
-	void RPC(RakNet::BitStream& bitStream);
 };
 
 #endif
