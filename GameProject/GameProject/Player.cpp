@@ -24,7 +24,6 @@ void Player::Update()
 	{
 		const InputSystem& input = InputSystem::Instance();
 		lastFireTime-=Time::Instance().DeltaTime();
-		//shoot Test
 		if (NetworkEngine::Instance().rakInterface->GetMyGUID().g == PlayerID)
 		{
 			if (input.IsMouseButtonPressed(1) && lastFireTime < 0.0f)
@@ -35,42 +34,6 @@ void Player::Update()
 		}
 	}
 }
-void Player::SerializeCreate(RakNet::BitStream& bitStream) const
-{
-	Component::SerializeCreate(bitStream);
-	bitStream.Write(PlayerID);
-}
-void Player::DeserializeCreate(RakNet::BitStream& bitStream)
-{
-	Component::DeserializeCreate(bitStream);
-	bitStream.Read(PlayerID);
-}
-
-void Player::Load(json::JSON& node)
-{
-	Component::Load(node);
-
-	if (node.hasKey("DeathScene"))
-	{
-		game_over_scene = GetHashCode(node.at("DeathScene").ToString().c_str());
-	}
-}
-
-void Player::CheckCollision()
-{
-	for (const auto& other : collider->OnCollisionEnter())
-	{
-		if (other->GetOwner()->HasComponent<Asteroid>())
-		{
-			LOG("Player collided with Asteroid");
-			continue;
-		}
-
-		
-	}
-}
-
-
 void Player::Fire()
 {
 	Vec2 targetPos;
@@ -129,6 +92,35 @@ void Player::RPC(RakNet::BitStream& bitStream)
 
 	float angleRadians = atan2(direction.y, direction.x);
 	bullet->GetTransform().rotation = RAD_TO_DEG(angleRadians);
+}
 
+void Player::Load(json::JSON& node)
+{
+	Component::Load(node);
 
+	if (node.hasKey("DeathScene"))
+	{
+		game_over_scene = GetHashCode(node.at("DeathScene").ToString().c_str());
+	}
+}
+void Player::CheckCollision()
+{
+	for (const auto& other : collider->OnCollisionEnter())
+	{
+		if (other->GetOwner()->HasComponent<Asteroid>())
+		{
+			LOG("Player collided with Asteroid");
+			continue;
+		}
+	}
+}
+void Player::SerializeCreate(RakNet::BitStream& bitStream) const
+{
+	Component::SerializeCreate(bitStream);
+	bitStream.Write(PlayerID);
+}
+void Player::DeserializeCreate(RakNet::BitStream& bitStream)
+{
+	Component::DeserializeCreate(bitStream);
+	bitStream.Read(PlayerID);
 }

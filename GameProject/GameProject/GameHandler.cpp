@@ -14,7 +14,6 @@ void GameHandler::Initialize()
 
 void GameHandler::Update() 
 {
-	
 	if (NetworkEngine::Instance().IsClient() && !bPlayerSpawned&&NetworkEngine::Instance().GetNumOfConnections()==1) 
 	{
 		if (spawnDelay > 0) {
@@ -25,7 +24,6 @@ void GameHandler::Update()
 			bPlayerSpawned = true;  
 		}
 	}
-
 }
 
 void GameHandler::SpawnPlayer()
@@ -36,14 +34,10 @@ void GameHandler::SpawnPlayer()
 
 	bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
 	bitStream.Write((unsigned char)MSG_RPC);
-
 	bitStream.Write(owner->GetParentScene()->GetUid());
 	bitStream.Write(owner->GetUid());
-
 	bitStream.Write(GetUid());
-
 	bitStream.Write(GetHashCode("RPC"));
-
 	bitStream.Write(newPosition.x);
 	bitStream.Write(newPosition.y);
 	bitStream.Write(NetworkEngine::Instance().rakInterface->GetMyGUID());
@@ -66,12 +60,8 @@ void GameHandler::RPC(RakNet::BitStream& bitStream)
 	Sprite* playersprite = newplayer->CreateComponent<Sprite>();
 	TextureAsset* playerTexture = (TextureAsset*)AssetManager::Instance().GetAsset("a7af9547-0ca5-4df0-8f37-276d7827117b");
 	playersprite->SetTextureAsset(playerTexture);
-
 	newplayer->CreateComponent<BoxCollider>();
-
 	newplayer->GetTransform().Scale(Vec2(0.5, 0.5));
-
-	
 	Player* playercomponent = newplayer->CreateComponent<Player>();
 	playercomponent->SetID(id);
 	newplayer->GetTransform().position = position;
@@ -80,16 +70,9 @@ void GameHandler::RPC(RakNet::BitStream& bitStream)
 Vec2 GameHandler::GenerateUniformPosition() {
 	int screenWidth = RenderSystem::Instance().GetWindowSize().x;
 	int screenHeight = RenderSystem::Instance().GetWindowSize().y;
-
 	int gridCols = 4;
-
-
 	int cellWidth = screenWidth / gridCols;
-
-
-	// Select a random cell
 	int cellX = rand() % gridCols;
-
 	// Random position within the selected cell
 	Vec2 newPosition = Vec2(
 		cellX * cellWidth + rand() % cellWidth,

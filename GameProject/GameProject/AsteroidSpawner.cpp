@@ -13,7 +13,6 @@ void AsteroidSpawner::Initialize()
 {
 	Component::Initialize();
 	srand((unsigned int)time(NULL));
-
 }
 
 void AsteroidSpawner::Update()
@@ -33,7 +32,7 @@ void AsteroidSpawner::Update()
 void AsteroidSpawner::SpawnAsteroid()
 {
 	RakNet::BitStream bitStream;
-	int type = rand() % 2; // Assuming two types for demonstration
+	int type = rand() % 2;
 	Vec2 position = GetRandomPosition();
 
 	Entity* asteroid = SceneManager::Instance().CreateEntity();

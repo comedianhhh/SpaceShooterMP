@@ -41,7 +41,6 @@ void Asteroid::CheckBounds()
 	}
 
 }
-
 void Asteroid::Move()
 {
 	owner->GetTransform().position += direction * speed * Time::Instance().DeltaTime();
@@ -99,17 +98,14 @@ void Asteroid::SendUpdate()
 	if (NetworkEngine::Instance().IsServer())
 	{
 		RakNet::BitStream bitStream;
-
-
 		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
 		bitStream.Write((unsigned char)MSG_RPC);
 
 		bitStream.Write(owner->GetParentScene()->GetUid());
 		bitStream.Write(owner->GetUid());
-
 		bitStream.Write(GetUid());
 
-		bitStream.Write(GetHashCode("FireRPC"));
+		bitStream.Write(GetHashCode("AstRPC"));
 		bitStream.Write(owner->GetTransform().position.x);
 		bitStream.Write(owner->GetTransform().position.y);
 		bitStream.Write(Time::Instance().TotalTime());

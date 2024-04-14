@@ -14,9 +14,9 @@ void Bullet::Initialize()
 
 void Bullet::Update()
 {
+	Move();
 	if (NetworkEngine::Instance().IsServer()) {
 		CheckBounds();
-		Move();
 		updateTimer -= Time::Instance().DeltaTime();
 		if (updateTimer <= 0.0f) {
 			SendBulletUpdate();
@@ -26,24 +26,10 @@ void Bullet::Update()
 	}
 
 }
-
-void Bullet::SetDirection(const Vec2& dir)
-{
-	direction = dir;
-}
-
-void Bullet::SetSpeed(float spd)
-{
-	speed = spd;
-}
-
-
-
 void Bullet::Move()
 {
 	owner->GetTransform().position += direction * speed * Time::Instance().DeltaTime();
 }
-
 
 void Bullet::CheckBounds()
 {
@@ -70,6 +56,25 @@ void Bullet::CheckCollision()
 		break;
 	}
 }
+void Bullet::SendBulletUpdate()
+{
+	if (NetworkEngine::Instance().IsServer())
+	{
+		RakNet::BitStream bitStream;
+		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
+		bitStream.Write((unsigned char)MSG_RPC);
+		bitStream.Write(owner->GetParentScene()->GetUid());
+		bitStream.Write(owner->GetUid());
+		bitStream.Write(GetUid());
+		bitStream.Write(GetHashCode("FireRPC"));
+
+		bitStream.Write(owner->GetTransform().position.x);
+		bitStream.Write(owner->GetTransform().position.y);
+		bitStream.Write(Time::Instance().TotalTime());
+
+		NetworkEngine::Instance().SendPacket(bitStream);
+	}
+}
 void Bullet::RPC(RakNet::BitStream& bitStream)
 {
 	float x, y;
@@ -84,27 +89,12 @@ void Bullet::RPC(RakNet::BitStream& bitStream)
 }
 
 
-void Bullet::SendBulletUpdate()
+void Bullet::SetDirection(const Vec2& dir)
 {
-	if (NetworkEngine::Instance().IsServer())
-	{
-		RakNet::BitStream bitStream;
+	direction = dir;
+}
 
-
-		bitStream.Write((unsigned char)MSG_SCENE_MANAGER);
-		bitStream.Write((unsigned char)MSG_RPC);
-
-		bitStream.Write(owner->GetParentScene()->GetUid());
-		bitStream.Write(owner->GetUid());
-
-		bitStream.Write(GetUid());
-
-		bitStream.Write(GetHashCode("FireRPC"));
-
-		bitStream.Write(owner->GetTransform().position.x);
-		bitStream.Write(owner->GetTransform().position.y);
-		bitStream.Write(Time::Instance().TotalTime());
-
-		NetworkEngine::Instance().SendPacket(bitStream);
-	}
+void Bullet::SetSpeed(float spd)
+{
+	speed = spd;
 }
