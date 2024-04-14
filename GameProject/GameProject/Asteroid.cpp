@@ -19,11 +19,9 @@ void Asteroid::Update()
 	{
 		CheckBounds();
 		Move();
-
 		CheckCollision();
 	}
 }
-
 void Asteroid::CheckBounds()
 {
 	if (owner->GetTransform().position.y > RenderSystem::Instance().GetWindowSize().y ||
@@ -34,13 +32,11 @@ void Asteroid::CheckBounds()
 		SceneManager::Instance().RemoveEntity(owner->GetUid());
 		return;
 	}
-
 }
 void Asteroid::Move()
 {
 	owner->GetTransform().position += direction * speed * Time::Instance().DeltaTime();
 }
-
 void Asteroid::CheckCollision()
 {
 	if (collider == nullptr) return;

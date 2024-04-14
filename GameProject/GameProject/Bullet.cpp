@@ -18,7 +18,6 @@ void Bullet::Update()
 		CheckBounds();
 		CheckCollision();
 	}
-
 }
 void Bullet::Move()
 {
@@ -42,7 +41,6 @@ void Bullet::CheckCollision()
 	if (collider == nullptr) return;
 	for (const auto& other : collider->OnCollisionEnter())
 	{
-		// Here, you can check for collision with specific entities
 		if (other->GetOwner()->HasComponent<Asteroid>())
 		{
 			SceneManager::Instance().RemoveEntity(owner->GetUid());
@@ -50,9 +48,6 @@ void Bullet::CheckCollision()
 		break;
 	}
 }
-
-
-
 void Bullet::SetDirection(const Vec2& dir)
 {
 	direction = dir;
