@@ -1,2 +1,2 @@
 # SpaceShooterMP
-NetWorking Assignment 2
+Multiplayer Game C++ Demo
