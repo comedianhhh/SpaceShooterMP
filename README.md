@@ -17,7 +17,7 @@
   - Synchronized game state across players
   - Player position and bullet prediction
 - **Custom Engine Components**
-  - Entity-component system (ECS) architecture
+  - component-based system architecture
   - Asteroid spawning system with wave management
   - Collision detection and resolution
 - **Network Features**
