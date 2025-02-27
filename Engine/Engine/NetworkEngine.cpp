@@ -13,6 +13,8 @@ void NetworkEngine::Initialize(bool _isServer)
 }
 void NetworkEngine::LoadSettings()
 {
+	//if error occurs,open the ProjectTemplate settings again and change the Debugging -> Working Directory: $(SolutionDir)Build\bin\
+	
 	std::ifstream inputStream("../Assets/NetworkSettings.json");
 	std::string str((std::istreambuf_iterator<char>(inputStream)), std::istreambuf_iterator<char>());
 	json::JSON document = json::JSON::Load(str);
