@@ -36,21 +36,16 @@
 | `AsteroidSpawner` | Controls asteroid generation patterns |
 | `Player` | Handles player movement and shooting |
 | `Bullet` | Manages projectile physics and collisions |
+![image](https://github.com/user-attachments/assets/e0c473c0-edbd-4487-b419-e52dbb2c7f0d)
+
 
 ### Network Architecture
-```cpp
-// GameHandler.h - Multi-client management
-class GameHandler {
-public:
-    void HandleClientConnection(Client& client);
-    void BroadcastGameState();
-    void UpdatePlayerPosition(int clientId, Vector2D newPos);
-    
-private:
-    std::vector<Client> connectedClients;
-    GameState currentState;
-};
-```
+![image](https://github.com/user-attachments/assets/f12cda3d-3836-4814-a0e6-d2eaaacf5653)
+
+![image](https://github.com/user-attachments/assets/f602266c-5705-421c-a8cf-43cfb900bfc4)
+
+![image](https://github.com/user-attachments/assets/bda26c03-2130-46c2-b276-4be722db96ea)
+
 ### Game Loop Snippet
 ```cpp
 
